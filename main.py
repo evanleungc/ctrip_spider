@@ -1,5 +1,5 @@
 import os
-os.chdir('/Users/apple/Desktop/ctrip_spider')
+os.chdir('/Users/apple/Documents/ctrip_spider')
 import ctrip_funcs as cf
 
 BRAND_ID = 'h110' #如家id--'h110'
@@ -30,4 +30,4 @@ hotel_id = hotel_info['id'][0] #Test on one hotel
 city = citylist[0]
 start_date = '2018-05-23'
 dep_date = '2018-05-24'
-detailinfo = get_detail_info(hotel_id, city, start_date, dep_date)
+detailinfo = cf.get_detail_info(hotel_id, city, start_date, dep_date)

@@ -7,8 +7,8 @@ import time
 import os
 import pandas as pd
 
-JS_PATH = '/Users/apple/Desktop/ctrip_spider/js/'
-COOKIE_PATH = '/Users/apple/Desktop/ctrip_spider/cookie/'
+JS_PATH = '/Users/apple/Documents/ctrip_spider/js/'
+COOKIE_PATH = '/Users/apple/Documents/ctrip_spider/cookie/'
 
 def usere(regex, getcontent): #regex
     pattern = re.compile(regex)
@@ -16,6 +16,9 @@ def usere(regex, getcontent): #regex
     return content
 
 def modify(string):
+	'''
+	add escape to special signs
+	'''
 	string = string.replace('(', '\(')
 	string = string.replace(')', '\)')
 	return string
@@ -113,7 +116,8 @@ def get_detail_info(hotel_id, city, start_date, dep_date):
 
 	Return
 	------
-
+	detail_info: dict
+		detail info of each hotel
 	'''
 	detail_info = {}
 	eleven = get_eleven()
@@ -189,6 +193,20 @@ def get_detail_info(hotel_id, city, start_date, dep_date):
 	return detail_info
 
 def get_room_left(url):
+	'''
+	How many rooms are available to be booked in the current situation
+	Parameters
+	----------
+	url: string
+		booking url of each room type
+
+	Returns
+	-------
+	left: int
+		number of rooms available to be booked in the current situation
+		special case '-1': more than 5 rooms are available
+					 '0': no rooms can be booked
+	'''
 	ticketdf = pd.read_csv(COOKIE_PATH + 'ticket.csv')
 	ticket = ticketdf['ticket'].values[0]
 	headers = {
@@ -207,7 +225,14 @@ def get_room_left(url):
 			left = int(left[0])
 	return left
 
-def gen_ctrip_ticket():
+def gen_ctrip_ticket(update_freq):
+	'''
+	Use selenium to generate ticket cookie. The ticket will be saved in COOKIE_PATH
+	Parameters
+	---------- 
+	update_freq: int
+		frequency of updating ticket (in seconds)
+	'''
 	while 1:
 		try:
 			if not os.path.exists(COOKIE_PATH + 'ticket.csv'): #If not exist, make file
@@ -224,7 +249,7 @@ def gen_ctrip_ticket():
 			if ticket != None:
 				ticketdf = pd.DataFrame({'ticket': [ticket]})
 				ticketdf.to_csv(COOKIE_PATH + 'ticket.csv', index = False)
-				time.sleep(1800) #300秒更新一次cookie
+				time.sleep(update_freq) #update cookie after update_freq time
 			driver.close()
 		except:
 			driver.close()
@@ -232,6 +257,13 @@ def gen_ctrip_ticket():
 			ticketdf.to_csv(COOKIE_PATH + 'ticket.csv', index = False)
 
 def get_oceanball():
+	'''
+	Get random oceanball javascript
+	Return
+	------
+	oceanball: random url of oceanball js
+	cas: random function of generation of eleven
+	'''
 	oceanball = 'http://hotels.ctrip.com/domestic/cas/oceanball?callback=%s&_=%s'
 	f = open(JS_PATH + 'get_callback.js')
 	callback_js = f.read()
@@ -246,6 +278,13 @@ def get_oceanball():
 	return (oceanball, cas)
 
 def get_eleven():
+	'''
+	Get "eleven" from oceanball
+	Return
+	------
+	eleven: string
+		parameter to get detail info
+	'''
 	oceanball, cas = get_oceanball()
 	ocean = requests.get(oceanball).content.decode('utf8')
 	ocean = ocean.replace('eval','JSON.stringify')  
