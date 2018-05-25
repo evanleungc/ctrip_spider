@@ -10,4 +10,5 @@
 * "eleven"由一个混淆js文件-"oceanball"生成，该文件具有随机性
 * 生成方法:ctrip_funcs.py中的"get_oceanball"、"get_eleven"两个函数，需要配合js代码和python共同生成
 ## 2. 发现获得剩余可订房间仅需要Cookie: ctrip_ticket
-* 生成机制未明，可以用selenium每30分钟提取一次，保证时效
+* 这个cookie疑似使用“Http-only”Flag 发送，无法直接读取，只能通过浏览器获得。([reference](https://stackoverflow.com/questions/1022112/why-doesnt-document-cookie-show-all-the-cookie-for-the-site))
+* 该cookie时效较长，可以用selenium每30分钟提取一次
