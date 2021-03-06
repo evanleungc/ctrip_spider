@@ -1,4 +1,4 @@
-# 携程爬虫(破解eleven, 发现ctrip_ticket)
+# Scrape Learning (ctrip)
 **使用时先跑'gen_ticket.py'生成ctrip_ticket，再跑'main.py'** <br />
 破解eleven参数后，可以不需要调用selenium便可请求到详细的价格信息，提升获取速度、减少资源占用 <br />
 该爬虫可爬取：
